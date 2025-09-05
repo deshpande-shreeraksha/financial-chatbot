@@ -59,7 +59,7 @@ export default function ChatWindow() {
   return (
     <div className="max-w-2xl mx-auto bg-white shadow p-4 rounded">
       <h2 className="text-xl font-semibold mb-4">
-        Hi , ready to explore today’s financial tips?
+        Hi {userName}, ready to explore today’s financial tips?
       </h2>
 
       <div className="space-y-2 max-h-[400px] overflow-y-auto">
@@ -85,6 +85,10 @@ export default function ChatWindow() {
           className="flex-grow border p-2 rounded-l"
           placeholder="Ask about loans, scams, banking..."
         />
+
+<button onClick={() => sendFeedback('positive')}>👍 Helpful</button>
+<button onClick={() => sendFeedback('negative')}>👎 Not Helpful</button>
+
         <button type="submit" className="bg-blue-600 text-white px-4 rounded-r">
           Send
         </button>
