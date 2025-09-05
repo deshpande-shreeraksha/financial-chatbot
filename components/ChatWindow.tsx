@@ -8,33 +8,20 @@ type Message = {
 
 export default function ChatWindow() {
   const [input, setInput] = useState('');
-  const [chatHistory, setChatHistory] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState('Guest');
 
   useEffect(() => {
     const storedName = localStorage.getItem('userName');
     if (storedName) setUserName(storedName);
-
-    const savedHistory = localStorage.getItem('chatHistory');
-    if (savedHistory) setChatHistory(JSON.parse(savedHistory));
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-  }, [chatHistory]);
 
   const getChatResponse = async (userPrompt: string): Promise<string> => {
     const response = await fetch('/api/cohere', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        prompt: userPrompt,
-        history: chatHistory.map((msg) => ({
-          role: msg.role,
-          message: msg.content
-        }))
-      })
+      body: JSON.stringify({ prompt: userPrompt })
     });
 
     const data = await response.json();
@@ -47,18 +34,14 @@ export default function ChatWindow() {
     if (!input.trim()) return;
 
     const userMessage: Message = { role: 'user', content: input };
-    setChatHistory((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
 
     try {
       const botReply = await getChatResponse(input);
-      const botMessage: Message = { role: 'assistant', content: botReply };
-      setChatHistory((prev) => [...prev, botMessage]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: botReply }]);
     } catch (error) {
-      setChatHistory((prev) => [
-        ...prev,
-        { role: 'assistant', content: '⚠️ Error fetching response. Please try again later.' }
-      ]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: '⚠️ Error fetching response. Please try again later.' }]);
     }
 
     setInput('');
@@ -80,23 +63,13 @@ export default function ChatWindow() {
       </h2>
 
       <div className="space-y-2 max-h-[400px] overflow-y-auto">
-        {chatHistory.map((msg, i) => (
+        {messages.map((msg, i) => (
           <div key={i} className={`p-3 rounded ${msg.role === 'user' ? 'bg-blue-100 text-right' : 'bg-green-100 text-left'}`}>
             <p><strong>{msg.role === 'user' ? 'You' : 'Bot'}:</strong> {msg.content}</p>
             {msg.role === 'assistant' && (
-              <div className="flex gap-2 mt-2 justify-start">
-                <button
-                  onClick={() => sendFeedback('positive')}
-                  className="bg-green-500 text-white px-2 py-1 rounded"
-                >
-                  👍 Helpful
-                </button>
-                <button
-                  onClick={() => sendFeedback('negative')}
-                  className="bg-red-500 text-white px-2 py-1 rounded"
-                >
-                  👎 Not Helpful
-                </button>
+              <div className="flex gap-2 mt-2">
+                <button onClick={() => sendFeedback('positive')} className="bg-green-500 text-white px-2 py-1 rounded">👍 Helpful</button>
+                <button onClick={() => sendFeedback('negative')} className="bg-red-500 text-white px-2 py-1 rounded">👎 Not Helpful</button>
               </div>
             )}
           </div>
