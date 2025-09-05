@@ -79,6 +79,24 @@ export default function ChatWindow() {
     setLoading(false);
   };
   
+  const getLoanEstimate = async (amount: number, rate: number, years: number): Promise<string> => {
+    const response = await fetch('/api/loan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, rate, years })
+    });
+    try {
+        const result = await getLoanEstimate(500000, 8, 5);
+        setChatHistory((prev) => [...prev, { role: 'assistant', content: result }]);
+      } catch (error) {
+        setChatHistory((prev) => [...prev, { role: 'assistant', content: '⚠️ Unable to fetch data. Please try again.' }]);
+      }
+      
+  
+    const data = await response.json();
+    return `Your estimated EMI is ₹${data.emi} per month.`;
+  };
+  
   
   const sendFeedback = async (rating: 'positive' | 'negative') => {
     await fetch('/api/feedback', {
