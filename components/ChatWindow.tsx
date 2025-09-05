@@ -7,7 +7,7 @@ type Message = {
   };
   
 
-export default function ChatWindow() {
+export default async function ChatWindow() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
@@ -96,7 +96,20 @@ export default function ChatWindow() {
     const data = await response.json();
     return `Your estimated EMI is ₹${data.emi} per month.`;
   };
-  
+  const tone = localStorage.getItem('tone') || 'formal';
+const role = localStorage.getItem('role') || 'advisor';
+
+const response = await fetch('/api/cohere', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    prompt: input,
+    history: [...chatHistory, userMessage].slice(-10),
+    tone,
+    role
+  })
+});
+
   
   const sendFeedback = async (rating: 'positive' | 'negative') => {
     await fetch('/api/feedback', {
@@ -128,6 +141,14 @@ export default function ChatWindow() {
           </div>
         ))}
       </div>
+      
+
+<select onChange={(e) => localStorage.setItem('role', e.target.value)} className="mb-4">
+  <option value="advisor">Financial Advisor</option>
+  <option value="analyst">Fraud Analyst</option>
+  <option value="officer">Loan Officer</option>
+</select>
+
   
       {/* Input Form */}
       <form onSubmit={handleSubmit} className="mt-4 flex">
