@@ -105,13 +105,15 @@ export default function ChatWindow() {
       </div>
 
       <form onSubmit={handleSubmit} className="mt-4 flex">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="flex-grow border p-2 rounded-l"
-          placeholder="Ask about loans, scams, banking..."
-        />
+      <input
+  type="text"
+  placeholder="Enter your name"
+  value={userName}
+  onChange={(e) => setUserName(e.target.value)}
+  onBlur={() => localStorage.setItem('userName', userName)}
+  className="border p-2 rounded mb-4 w-full"
+/>
+
         <button type="submit" className="bg-blue-600 text-white px-4 rounded-r">
           Send
         </button>
