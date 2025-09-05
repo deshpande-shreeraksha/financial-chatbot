@@ -75,9 +75,9 @@ export default function ChatWindow() {
 
   return (
     <div className="max-w-2xl mx-auto bg-white shadow p-4 rounded">
-      <h2 className="text-xl font-semibold mb-4">
-        Hi {userName}, ready to explore today’s financial tips?
-      </h2>
+     <h2 className="text-xl font-semibold mb-4">
+  Hi {userName}, ready to explore today’s financial tips?
+</h2>
 
       <div className="space-y-2 max-h-[400px] overflow-y-auto">
         {chatHistory.map((msg, i) => (
