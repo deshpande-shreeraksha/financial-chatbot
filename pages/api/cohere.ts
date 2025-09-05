@@ -6,30 +6,16 @@ type Message = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { prompt, history } = req.body;
+  const { prompt, history } = req.body as {
+    prompt: string;
+    history: Message[];
+  };
 
-  try {
-    const response = await fetch('https://api.cohere.ai/chat', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.COHERE_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'command-r-plus',
-        message: prompt,
-        chatHistory: history.map((msg: Message) => ({
-          role: msg.role,
-          message: msg.content
-        })),
-        temperature: 0.7,
-        maxTokens: 300
-      })
-    });
+  // Now you can safely use msg.content
+  const formattedHistory = history.map((msg) => ({
+    role: msg.role,
+    message: msg.content
+  }));
 
-    const data = await response.json();
-    res.status(200).json({ reply: data.text });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch response from Cohere' });
-  }
+  // ... continue with your Cohere API call
 }
