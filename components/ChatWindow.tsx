@@ -75,9 +75,9 @@ export default function ChatWindow() {
 
   return (
     <div className="max-w-2xl mx-auto bg-white shadow p-4 rounded">
-     <h2 className="text-xl font-semibold mb-4">
-  Hi {userName}, ready to explore today’s financial tips?
-</h2>
+      <h2 className="text-xl font-semibold mb-4">
+        Hi {userName}, ready to explore today’s financial tips?
+      </h2>
 
       <div className="space-y-2 max-h-[400px] overflow-y-auto">
         {chatHistory.map((msg, i) => (
@@ -105,15 +105,13 @@ export default function ChatWindow() {
       </div>
 
       <form onSubmit={handleSubmit} className="mt-4 flex">
-      <input
-  type="text"
-  placeholder="Enter your name"
-  value={userName}
-  onChange={(e) => setUserName(e.target.value)}
-  onBlur={() => localStorage.setItem('userName', userName)}
-  className="border p-2 rounded mb-4 w-full"
-/>
-
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="flex-grow border p-2 rounded-l"
+          placeholder="Ask about loans, scams, banking..."
+        />
         <button type="submit" className="bg-blue-600 text-white px-4 rounded-r">
           Send
         </button>
