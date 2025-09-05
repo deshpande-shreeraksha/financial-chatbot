@@ -6,6 +6,9 @@ export default function ChatWindow() {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const userName = typeof window !== 'undefined' ? localStorage.getItem('userName') || 'Guest' : 'Guest';
+const greeting = `Hi ${userName}, ready to explore today’s financial tips?`;
+
   const getChatResponse = async (userPrompt: string): Promise<string> => {
     const response = await fetch('/api/cohere', {
       method: 'POST',
