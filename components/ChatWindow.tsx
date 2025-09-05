@@ -13,7 +13,15 @@ export default function ChatWindow() {
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState('Guest');
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
+  const userMessage: Message = { role: 'user', content: input };
 
+  const trimmedHistory = [...chatHistory, userMessage].slice(-10);
+
+  useEffect(() => {
+    const container = document.querySelector('.overflow-y-auto');
+    if (container) container.scrollTop = container.scrollHeight;
+  }, [chatHistory]);
+  
 
   useEffect(() => {
     const storedName = localStorage.getItem('userName');
@@ -82,25 +90,28 @@ export default function ChatWindow() {
 
   return (
     <div className="max-w-2xl mx-auto bg-white shadow p-4 rounded">
+      {/* Greeting */}
       <h2 className="text-xl font-semibold mb-4">
         Hi {userName}, ready to explore today’s financial tips?
       </h2>
-
-      <div className="space-y-2 max-h-[400px] overflow-y-auto">
-        {messages.map((msg, i) => (
-          <div key={i} className={`p-3 rounded ${msg.role === 'user' ? 'bg-blue-100 text-right' : 'bg-green-100 text-left'}`}>
-            <p><strong>{msg.role === 'user' ? 'You' : 'Bot'}:</strong> {msg.content}</p>
-            {msg.role === 'assistant' && (
-              <div className="flex gap-2 mt-2">
-                <button onClick={() => sendFeedback('positive')} className="bg-green-500 text-white px-2 py-1 rounded">👍 Helpful</button>
-                <button onClick={() => sendFeedback('negative')} className="bg-red-500 text-white px-2 py-1 rounded">👎 Not Helpful</button>
-              </div>
-            )}
+  
+      
+      <div className="space-y-2 max-h-[400px] overflow-y-auto mb-4">
+        {chatHistory.map((msg, i) => (
+          <div
+            key={i}
+            className={`p-3 rounded ${
+              msg.role === 'user' ? 'bg-blue-100 text-right' : 'bg-green-100 text-left'
+            }`}
+          >
+            <p>
+              <strong>{msg.role === 'user' ? 'You' : 'Bot'}:</strong> {msg.content}
+            </p>
           </div>
         ))}
-        {loading && <p className="text-gray-500 italic">Thinking...</p>}
       </div>
-
+  
+      {/* Input Form */}
       <form onSubmit={handleSubmit} className="mt-4 flex">
         <input
           type="text"
@@ -109,14 +120,12 @@ export default function ChatWindow() {
           className="flex-grow border p-2 rounded-l"
           placeholder="Ask about loans, scams, banking..."
         />
-
-<button onClick={() => sendFeedback('positive')}>👍 Helpful</button>
-<button onClick={() => sendFeedback('negative')}>👎 Not Helpful</button>
-
         <button type="submit" className="bg-blue-600 text-white px-4 rounded-r">
           Send
         </button>
       </form>
     </div>
   );
+  
 }
+  
